@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OMNIRECKON – Find the software you pay for but don’t use</title>
+<meta name="description" content="OMNIRECKON reviews your software subscriptions and licenses, then shows what is worth a second look before you renew.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07080A;--surface:#101216;--ink:#F4F1EA;--muted:#A5A9B1;--line:#23262D;--teal:#D9B25F;--teal-ink:#0A0A0B;--gold:#EBC96F;--gold-ink:#0A0A0B;--ok:#4FD1B5;color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 "Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2{font-family:"Bricolage Grotesque","Public Sans",system-ui,sans-serif;line-height:1.08;margin:0;letter-spacing:-.02em}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px;position:relative}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);transition:box-shadow .3s}
+.top.sc{box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.logo{font:800 1.12rem "Bricolage Grotesque",sans-serif;letter-spacing:.14em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:11px}
+.logo svg{width:40px;height:40px;flex:none}
+.nav{display:flex;align-items:center;gap:22px}
+.navlink{color:var(--muted);text-decoration:none;font-size:.95rem;font-weight:500;transition:color .2s}
+.navlink:hover{color:var(--ink)}
+.btn{display:inline-block;background:var(--teal);color:var(--teal-ink);padding:14px 22px;border-radius:8px;font-weight:600;text-decoration:none;font-size:1rem;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(217,178,95,.28)}
+.btnsm{padding:9px 14px;font-size:.92rem}
+.heroW{position:relative;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.13;animation:fl 16s ease-in-out infinite alternate}
+.o1{width:420px;height:420px;background:var(--teal);top:-120px;left:-100px}
+.o2{width:340px;height:340px;background:var(--ok);bottom:-120px;right:-60px;animation-delay:-6s}
+@keyframes fl{to{transform:translate(70px,50px) scale(1.12)}}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:72px 22px 80px}
+h1{font-size:clamp(2.4rem,5.4vw,3.9rem);font-weight:800}
+.lead{font-size:1.15rem;color:var(--muted);max-width:34em;margin:22px 0 30px}
+.small{font-size:.92rem;color:var(--muted);margin:14px 0 0}
+.hl>*{animation:up .8s cubic-bezier(.2,.7,.2,1) both}
+.hl>:nth-child(2){animation-delay:.12s}.hl>:nth-child(3){animation-delay:.24s}.hl>:nth-child(4){animation-delay:.34s}
+.est{animation:up .9s .3s cubic-bezier(.2,.7,.2,1) both;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;box-shadow:0 30px 60px -28px rgba(0,0,0,.9),0 0 0 1px rgba(217,178,95,.08)}
+@keyframes up{from{opacity:0;transform:translateY(22px)}}
+.est h2{font-size:1.3rem}
+.est p{margin:6px 0 0;color:var(--muted);font-size:.93rem}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:.88rem;font-weight:500;color:var(--muted)}
+.fld input{font:500 1.05rem "Public Sans",sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;transition:border-color .2s}
+.fld input:focus{border-color:var(--teal)}
+.err{font-size:.93rem;margin:0}
+.result[hidden]{display:none}
+.stack{display:flex;height:16px;border-radius:99px;overflow:hidden;background:var(--line);margin-bottom:16px}
+.stack span{display:block;height:100%;width:0;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.sa{background:var(--ok)}.sb{background:var(--gold)}.sc2{background:repeating-linear-gradient(45deg,var(--gold) 0 4px,transparent 4px 8px)}
+.rows{display:flex;gap:18px;margin:0 0 16px}
+.rows div{flex:1}
+.num{font:800 1.9rem "Bricolage Grotesque",sans-serif;display:block;line-height:1}
+.lbl{font-size:.82rem;color:var(--muted)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.big{background:var(--gold);color:var(--gold-ink);border-radius:10px;padding:16px 18px}
+.big .num{font-size:2.3rem}
+.big .lbl{color:var(--gold-ink);font-size:.9rem}
+.note{font-size:.84rem;color:var(--muted);margin-top:12px}
+.sec{display:grid;grid-template-columns:240px 1fr;gap:32px;padding:64px 0;border-top:1px solid var(--line)}
+.sec h2{font-size:1.95rem;font-weight:800}
+.list{margin:-15px 0 0;padding:0;list-style:none}
+.g{display:grid;grid-template-columns:1fr 1fr;column-gap:40px}
+.list li{position:relative;padding:15px 0 15px 26px;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.list li::before{content:"";position:absolute;left:0;top:22px;width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(217,178,95,.16)}
+.g li:nth-child(2){border-top:0}
+.list strong{display:block;font-weight:600}
+.list span{color:var(--muted)}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;position:relative}
+.steps::before,.steps::after{content:"";position:absolute;left:19px;top:20px;width:2px}
+.steps::before{bottom:20px;background:var(--line)}
+.steps::after{height:calc((100% - 40px)*var(--p,0));background:var(--teal)}
+.steps li{counter-increment:s;display:grid;grid-template-columns:58px 1fr;padding:0 0 28px}
+.steps li:last-child{padding-bottom:0}
+.steps li::before{content:counter(s);position:relative;z-index:1;width:40px;height:40px;border-radius:50%;background:var(--bg);border:2px solid var(--teal);color:var(--teal);display:grid;place-items:center;font:800 1.1rem "Bricolage Grotesque",sans-serif}
+.steps strong{display:block;font-weight:600;padding-top:6px}
+.steps span{color:var(--muted)}
+.band{background:var(--surface);border-block:1px solid var(--line)}
+.band .sec{border-top:0}
+details{border-top:1px solid var(--line);padding:16px 0}
+details:first-child{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:600;display:flex;justify-content:space-between;gap:16px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--teal);font-size:1.4rem;line-height:1;transition:transform .25s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:10px 0 0;color:var(--muted);animation:up .35s both}
+.cta{background:linear-gradient(135deg,#1A150A,#0D0E11 60%);border:1px solid rgba(217,178,95,.35);border-radius:18px;padding:48px;margin:8px 0 64px;position:relative;overflow:hidden}
+.cta::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:var(--teal);filter:blur(30px);opacity:.22;animation:fl 12s ease-in-out infinite alternate}
+.cta h2{font-size:2.1rem;font-weight:800;max-width:16em;position:relative;z-index:1}
+.cta p{max-width:36em;margin:14px 0 24px;color:var(--muted);position:relative;z-index:1}
+.cta .btn{position:relative;z-index:1}
+.foot{border-top:1px solid var(--line);padding:26px 0 34px;color:var(--muted);font-size:.9rem}
+.js .rv{opacity:0;transform:translateY(18px);transition:opacity .7s,transform .7s cubic-bezier(.2,.7,.2,1)}
+.js .rv.in{opacity:1;transform:none}
+@media (max-width:860px){.hero{grid-template-columns:1fr;gap:36px;padding:44px 22px 52px}.sec{grid-template-columns:1fr;gap:22px;padding:48px 0}.g{grid-template-columns:1fr}.g li:nth-child(2){border-top:1px solid var(--line)}}
+@media (max-width:620px){.navlink{display:none}.cta{padding:30px 24px}.rows{gap:10px}.num{font-size:1.6rem}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.js .rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header class="top" id="hd">
+  <div class="wrap bar">
+    <a class="logo" href="#top"><svg viewBox="0 0 100 100" width="40" height="40" aria-hidden="true" focusable="false"><path d="M42.4 10.7 L44.4 4.3 L55.6 4.3 L57.6 10.7 A40 40 0 0 1 63.0 12.2 L68.0 7.7 L77.7 13.3 L76.2 19.8 A40 40 0 0 1 80.2 23.8 L86.7 22.3 L92.3 32.0 L87.8 37.0 A40 40 0 0 1 89.3 42.4 L95.7 44.4 L95.7 55.6 L89.3 57.6 A40 40 0 0 1 87.8 63.0 L92.3 68.0 L86.7 77.7 L80.2 76.2 A40 40 0 0 1 76.2 80.2 L77.7 86.7 L68.0 92.3 L63.0 87.8 A40 40 0 0 1 57.6 89.3 L55.6 95.7 L44.4 95.7 L42.4 89.3 A40 40 0 0 1 37.0 87.8 L32.0 92.3 L22.3 86.7 L23.8 80.2 A40 40 0 0 1 19.8 76.2 L13.3 77.7 L7.7 68.0 L12.2 63.0 A40 40 0 0 1 10.7 57.6 L4.3 55.6 L4.3 44.4 L10.7 42.4 A40 40 0 0 1 12.2 37.0 L7.7 32.0 L13.3 22.3 L19.8 23.8 A40 40 0 0 1 23.8 19.8 L22.3 13.3 L32.0 7.7 L37.0 12.2 A40 40 0 0 1 42.4 10.7 Z" fill="#171A20" stroke="#313640" stroke-width=".7" stroke-linejoin="round"/><circle cx="50" cy="50" r="37" fill="#090A0D"/><g fill="none" stroke="#fff" stroke-width="3.6"><path d="M69.9 26.3 A31 31 0 1 0 74.4 69.1"/><path d="M69.9 26.3 H80 l2.5 4" stroke-width="2.2"/></g><g fill="none" stroke-width="4.6" transform="translate(8.7 0) skewX(-10)"><rect x="29.6" y="36.1" width="20.8" height="26.8" rx="7" stroke="#fff"/><path d="M62 64V36H75a7.5 7.5 0 0 1 0 15H62M72 51L79.5 64" stroke="#2B9DEB"/></g></svg>OMNIRECKON</a>
+    <nav class="nav" aria-label="Main">
+      <a class="navlink" href="#how">How it works</a>
+      <a class="navlink" href="#data">Your data</a>
+      <a class="navlink" href="#faq">Questions</a>
+      <a class="btn btnsm" href="#contact">Free snapshot</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<section class="heroW">
+  <span class="orb o1"></span><span class="orb o2"></span>
+  <div class="wrap hero">
+    <div class="hl">
+      <h1>Find the software you pay for but don’t use.</h1>
+      <p class="lead">Send us your subscription list. We check it, a person reviews it, and you get a clear report on the licenses, duplicate tools and renewals worth a second look.</p>
+      <a class="btn" href="mailto:omnireckon@gmail.com?subject=Free%20spend%20snapshot%20request&body=Hi%2C%20I%E2%80%99d%20like%20a%20free%20spend%20snapshot.%0A%0ACompany%3A%0AApprox.%20number%20of%20software%20tools%3A">Request a free spend snapshot</a>
+      <p class="small">One CSV or Excel file is enough. We never need your passwords.</p>
+    </div>
+
+    <div class="est" aria-labelledby="est-h">
+      <h2 id="est-h">Try it with your own numbers</h2>
+      <p>The values below are an example. Replace them with one of your tools.</p>
+      <div class="fields">
+        <label class="fld">Licenses purchased<input id="p" type="number" inputmode="numeric" min="0" value="50"></label>
+        <label class="fld">Licenses assigned<input id="a" type="number" inputmode="numeric" min="0" value="45"></label>
+        <label class="fld">Active users<input id="u" type="number" inputmode="numeric" min="0" value="35"></label>
+        <label class="fld">Monthly cost (₹)<input id="c" type="number" inputmode="numeric" min="0" value="25000"></label>
+      </div>
+      <p class="err" id="msg" aria-live="polite"></p>
+      <div class="result" id="out" aria-live="polite">
+        <div class="stack" aria-hidden="true"><span class="sa" id="ba"></span><span class="sb" id="bb"></span><span class="sc2" id="bc"></span></div>
+        <div class="rows">
+          <div><span class="num" id="ac">35</span><span class="lbl"><i class="dot sa"></i>active</span></div>
+          <div><span class="num" id="idle">10</span><span class="lbl"><i class="dot sb"></i>assigned, no activity</span></div>
+          <div><span class="num" id="un">5</span><span class="lbl"><i class="dot sb"></i>unassigned</span></div>
+        </div>
+        <div class="big"><span class="num" id="m">₹7,500</span><span class="lbl">a month worth reviewing, about <b id="y">₹90,000</b> a year</span></div>
+        <p class="note">This is a place to start asking questions, not confirmed savings. Some licenses may be needed for occasional work, compliance or seasonal demand. The estimate assumes every license costs the same.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="sec rv">
+    <h2>What you get</h2>
+    <ul class="list g">
+      <li><strong>Total monthly and yearly spend</strong><span>Standardised so tools with different billing periods can be compared.</span></li>
+      <li><strong>Spend by application and vendor</strong><span>One consolidated view instead of many invoices.</span></li>
+      <li><strong>Purchased, assigned and active licenses</strong><span>Unused and unassigned ones listed for review, when your data includes them.</span></li>
+      <li><strong>Duplicate or overlapping tools</strong><span>Subscriptions that may do the same job.</span></li>
+      <li><strong>Upcoming renewals</strong><span>When dates are in your file, so you can decide before you are charged.</span></li>
+      <li><strong>What to check next</strong><span>Why each finding matters, what you could do, and what it might save if confirmed.</span></li>
+    </ul>
+  </section>
+
+  <section class="sec rv" id="how">
+    <h2>How it works</h2>
+    <ol class="steps" id="steps">
+      <li><div><strong>You share a file</strong><span>A CSV or Excel export of your software subscriptions. Missing columns are fine.</span></div></li>
+      <li><div><strong>We validate and analyse it</strong><span>Unclear or inconsistent data is flagged to you, not silently assumed to be correct.</span></div></li>
+      <li><div><strong>A person reviews every finding</strong><span>We check it against your needs, plan terms and renewal dates before it reaches the report.</span></div></li>
+      <li><div><strong>You get a report and decide</strong><span>We never cancel or buy anything for you. Savings are called verified only after the lower cost shows up in your spend.</span></div></li>
+    </ol>
+  </section>
+
+  <section class="sec rv">
+    <h2>Ways to work with us</h2>
+    <ul class="list g">
+      <li><strong>Free spend snapshot</strong><span>A one-page summary of your spend and the clearest things to check.</span></li>
+      <li><strong>Software cost audit</strong><span>A full review of your subscriptions and license use, with a written report.</span></li>
+      <li><strong>Monthly monitoring</strong><span>Regular reviews, renewal tracking and updated reports.</span></li>
+      <li><strong>Larger businesses</strong><span>Many tools or several departments? We scope it separately. Pricing depends on how many tools you use, so ask for a quote.</span></li>
+    </ul>
+  </section>
+</div>
+
+<div class="band" id="data">
+  <div class="wrap">
+    <section class="sec rv">
+      <h2>Your data stays yours</h2>
+      <ul class="list g">
+        <li><strong>We ask permission first</strong><span>Nothing is processed until you agree to it.</span></li>
+        <li><strong>Only what the analysis needs</strong><span>No passwords and no unnecessary personal information.</span></li>
+        <li><strong>Limited access, protected files</strong><span>Only the people working on your review can open your file, and it is protected in transfer and storage.</span></li>
+        <li><strong>Deleted on schedule</strong><span>We agree a retention period and delete your data when it ends. We will sign an NDA first if you want one.</span></li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="sec rv" id="faq">
+    <h2>Questions</h2>
+    <div>
+      <details><summary>Will you cancel subscriptions for us?</summary><p>No. We report what we find and recommend what to check. You approve every change.</p></details>
+      <details><summary>Our data is messy. Can you still use it?</summary><p>Yes. We flag missing or inconsistent fields and work with what is available. The report says what we could not confirm.</p></details>
+      <details><summary>Does low usage mean a license can be removed?</summary><p>Not always. That is why a person reviews each finding and why we suggest confirming with your teams before you act.</p></details>
+      <details><summary>Who is this for?</summary><p>Small and medium businesses, startups and IT companies that pay for many software tools and want one clear view of what they spend.</p></details>
+    </div>
+  </section>
+
+  <section class="cta rv" id="contact">
+    <h2>Get your free spend snapshot</h2>
+    <p>Email us your subscription list, or ask for a simple template first. We reply with a one-page summary of what we find.</p>
+    <a class="btn" href="mailto:omnireckon@gmail.com?subject=Free%20spend%20snapshot%20request&body=Hi%2C%20I%E2%80%99d%20like%20a%20free%20spend%20snapshot.%0A%0ACompany%3A%0AApprox.%20number%20of%20software%20tools%3A">Email omnireckon@gmail.com</a>
+  </section>
+</div>
+</main>
+
+<footer class="foot"><div class="wrap">OMNIRECKON – Better software spending decisions through data intelligence. © 2026</div></footer>
+
+<script>
+(function(){
+  var d=document,$=function(i){return d.getElementById(i)},rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  d.documentElement.classList.add("js");
+  var inr=function(n){return "₹"+Math.round(n).toLocaleString("en-IN")},int=function(n){return String(Math.round(n))};
+  var cur={},tok={};
+  function tw(k,to,fmt){
+    var el=$(k),from=cur[k]||0,my=tok[k]=(tok[k]||0)+1,t0=performance.now();
+    if(rm){el.textContent=fmt(to);cur[k]=to;return}
+    (function s(t){
+      if(tok[k]!==my)return;
+      var x=Math.min(1,(t-t0)/650),v=from+(to-from)*(1-Math.pow(1-x,3));
+      cur[k]=v;el.textContent=fmt(v);if(x<1)requestAnimationFrame(s);
+    })(t0);
+  }
+  function calc(){
+    var p=+$("p").value,a=+$("a").value,u=+$("u").value,c=+$("c").value,msg=$("msg"),out=$("out");
+    if([p,a,u,c].some(function(v){return !isFinite(v)||v<0})||p<=0||c<=0){
+      msg.textContent="Enter numbers above zero for licenses purchased and monthly cost.";out.hidden=true;return;
+    }
+    if(a>p||u>a){
+      msg.textContent="Check the numbers: assigned can’t be more than purchased, and active can’t be more than assigned.";out.hidden=true;return;
+    }
+    msg.textContent="";out.hidden=false;
+    var un=p-a,idle=a-u,m=(un+idle)*(c/p);
+    $("ba").style.width=u/p*100+"%";$("bb").style.width=idle/p*100+"%";$("bc").style.width=un/p*100+"%";
+    tw("ac",u,int);tw("idle",idle,int);tw("un",un,int);tw("m",m,inr);tw("y",m*12,inr);
+  }
+  Array.prototype.forEach.call(d.querySelectorAll(".est input"),function(i){i.addEventListener("input",calc)});
+  setTimeout(calc,rm?0:700);
+  var hd=$("hd"),st=$("steps");
+  function sc(){
+    hd.classList.toggle("sc",scrollY>8);
+    var r=st.getBoundingClientRect();
+    st.style.setProperty("--p",rm?1:Math.max(0,Math.min(1,(innerHeight*.65-r.top)/r.height)));
+  }
+  addEventListener("scroll",sc,{passive:true});sc();
+  var rv=d.querySelectorAll(".rv");
+  if("IntersectionObserver" in window&&!rm){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.12});
+    Array.prototype.forEach.call(rv,function(n){io.observe(n)});
+  }else{Array.prototype.forEach.call(rv,function(n){n.classList.add("in")})}
+})();
+</script>
+</body>
+</html>
